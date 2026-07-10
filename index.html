@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f4c542" />
+  <meta name="description" content="A private, offline symptom and daily impact diary." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Symptom & Impact Diary</title>
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">PRIVATE • OFFLINE-FIRST</p>
+      <h1>Symptom & Impact Diary</h1>
+      <p class="subtitle">Record symptoms, urgency, medication, food, travel and the effect on daily life.</p>
+    </div>
+    <button id="installBtn" class="button secondary hidden" type="button">Install App</button>
+  </header>
+
+  <main class="shell">
+    <section class="panel entry-panel">
+      <div class="section-heading">
+        <span class="number">1</span>
+        <div>
+          <h2>New diary entry</h2>
+          <p>Only the date and a short description are required.</p>
+        </div>
+      </div>
+
+      <form id="entryForm" novalidate>
+        <input type="hidden" id="entryId" />
+
+        <div class="grid two">
+          <label>
+            <span>Date</span>
+            <input id="entryDate" type="date" required />
+          </label>
+          <label>
+            <span>Time</span>
+            <input id="entryTime" type="time" />
+          </label>
+        </div>
+
+        <label>
+          <span>What happened?</span>
+          <textarea id="description" rows="4" maxlength="1000" required
+            placeholder="Example: Returned home after leaving for work due to bowel urgency. Arrived 10 minutes late."></textarea>
+        </label>
+
+        <div class="grid two">
+          <label>
+            <span>Category</span>
+            <select id="category">
+              <option value="Urgency">Urgency</option>
+              <option value="Accident / near miss">Accident / near miss</option>
+              <option value="Pain or discomfort">Pain or discomfort</option>
+              <option value="Food restriction">Food restriction</option>
+              <option value="Medication">Medication</option>
+              <option value="Travel">Travel</option>
+              <option value="Work impact">Work impact</option>
+              <option value="Social impact">Social impact</option>
+              <option value="Sleep impact">Sleep impact</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+          <label>
+            <span>Impact level</span>
+            <select id="impact">
+              <option value="1">1 — Minor</option>
+              <option value="2">2 — Noticeable</option>
+              <option value="3" selected>3 — Moderate</option>
+              <option value="4">4 — Significant</option>
+              <option value="5">5 — Severe</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="grid two">
+          <label>
+            <span>Location</span>
+            <input id="location" type="text" maxlength="120" placeholder="Home, work, Leeds, supermarket…" />
+          </label>
+          <label>
+            <span>Duration / delay</span>
+            <input id="duration" type="text" maxlength="120" placeholder="10 minutes, 2 hours, all morning…" />
+          </label>
+        </div>
+
+        <div class="grid two">
+          <label>
+            <span>Medication taken</span>
+            <input id="medication" type="text" maxlength="200" placeholder="Example: Extra loperamide before travel" />
+          </label>
+          <label>
+            <span>Food or drink avoided</span>
+            <input id="food" type="text" maxlength="200" placeholder="Example: Skipped breakfast" />
+          </label>
+        </div>
+
+        <fieldset>
+          <legend>What was affected?</legend>
+          <div class="checks">
+            <label><input type="checkbox" name="affected" value="Work" /> Work</label>
+            <label><input type="checkbox" name="affected" value="Travel" /> Travel</label>
+            <label><input type="checkbox" name="affected" value="Shopping" /> Shopping</label>
+            <label><input type="checkbox" name="affected" value="Social plans" /> Social plans</label>
+            <label><input type="checkbox" name="affected" value="Eating" /> Eating</label>
+            <label><input type="checkbox" name="affected" value="Sleep" /> Sleep</label>
+            <label><input type="checkbox" name="affected" value="Exercise" /> Exercise</label>
+            <label><input type="checkbox" name="affected" value="Other" /> Other</label>
+          </div>
+        </fieldset>
+
+        <label>
+          <span>Additional notes</span>
+          <textarea id="notes" rows="3" maxlength="1000"
+            placeholder="Toilet availability, warning time, coping steps, cancelled plans, witnesses or anything else useful."></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button class="button primary" type="submit" id="saveBtn">Save Entry</button>
+          <button class="button secondary hidden" type="button" id="cancelEditBtn">Cancel Edit</button>
+          <button class="button ghost" type="button" id="clearBtn">Clear Form</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel summary-panel">
+      <div class="section-heading">
+        <span class="number">2</span>
+        <div>
+          <h2>Diary overview</h2>
+          <p>A quick summary of the entries stored on this device.</p>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong id="totalEntries">0</strong><span>Total entries</span></div>
+        <div class="stat"><strong id="last30Entries">0</strong><span>Last 30 days</span></div>
+        <div class="stat"><strong id="highImpactEntries">0</strong><span>Impact 4–5</span></div>
+        <div class="stat"><strong id="daysAffected">0</strong><span>Different days</span></div>
+      </div>
+    </section>
+
+    <section class="panel diary-panel">
+      <div class="section-heading">
+        <span class="number">3</span>
+        <div>
+          <h2>Your entries</h2>
+          <p>Search, filter, edit or delete saved records.</p>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <input id="searchInput" type="search" placeholder="Search diary…" />
+        <select id="categoryFilter">
+          <option value="">All categories</option>
+          <option>Urgency</option>
+          <option>Accident / near miss</option>
+          <option>Pain or discomfort</option>
+          <option>Food restriction</option>
+          <option>Medication</option>
+          <option>Travel</option>
+          <option>Work impact</option>
+          <option>Social impact</option>
+          <option>Sleep impact</option>
+          <option>Other</option>
+        </select>
+        <select id="impactFilter">
+          <option value="">All impact levels</option>
+          <option value="1">Impact 1</option>
+          <option value="2">Impact 2</option>
+          <option value="3">Impact 3</option>
+          <option value="4">Impact 4</option>
+          <option value="5">Impact 5</option>
+        </select>
+      </div>
+
+      <div id="emptyState" class="empty-state">
+        <h3>No diary entries yet</h3>
+        <p>Your saved entries will appear here in date order.</p>
+      </div>
+      <div id="entryList" class="entry-list"></div>
+    </section>
+
+    <section class="panel data-panel">
+      <div class="section-heading">
+        <span class="number">4</span>
+        <div>
+          <h2>Export and backup</h2>
+          <p>Create a printable report or keep a backup copy of the data.</p>
+        </div>
+      </div>
+
+      <div class="data-actions">
+        <button class="button primary" id="printBtn" type="button">Print / Save PDF</button>
+        <button class="button secondary" id="exportCsvBtn" type="button">Export CSV</button>
+        <button class="button secondary" id="backupBtn" type="button">Backup JSON</button>
+        <label class="button secondary file-button">
+          Restore JSON
+          <input id="restoreInput" type="file" accept=".json,application/json" />
+        </label>
+        <button class="button danger" id="deleteAllBtn" type="button">Delete All Data</button>
+      </div>
+      <p class="privacy-note">
+        Data is stored locally in this browser on this device. It is not uploaded to a server by this app.
+        Clearing browser data, deleting the app, or changing device may remove it, so keep regular backups.
+      </p>
+    </section>
+  </main>
+
+  <template id="entryTemplate">
+    <article class="entry-card">
+      <div class="entry-top">
+        <div>
+          <div class="entry-date"></div>
+          <div class="entry-meta"></div>
+        </div>
+        <span class="impact-badge"></span>
+      </div>
+      <p class="entry-description"></p>
+      <div class="entry-details"></div>
+      <div class="entry-actions">
+        <button class="small-button edit-entry" type="button">Edit</button>
+        <button class="small-button delete-entry" type="button">Delete</button>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

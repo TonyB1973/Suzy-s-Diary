@@ -1,0 +1,23 @@
+{
+  "name": "Symptom & Impact Diary",
+  "short_name": "Impact Diary",
+  "description": "A private, offline symptom and daily impact diary.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1f2227",
+  "theme_color": "#f4c542",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/apple-touch-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
